@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 Cosas Sobre Mí</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8FBFD;
+            color: #2D3748;
+        }
+        .tab-active {
+            background-color: #4299E1;
+            color: #FFFFFF;
+        }
+        .fact-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E0EBF5;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column; /* Default for mobile */
+            align-items: center;
+            text-align: center;
+            cursor: pointer; /* Indica que la tarjeta es clicable */
+        }
+        @media (min-width: 768px) { /* Medium screens and up */
+            .fact-card {
+                flex-direction: row; /* Side-by-side for desktop */
+                text-align: left;
+                align-items: flex-start;
+            }
+            .fact-card .fact-text-content {
+                flex-grow: 1;
+                padding-right: 1.5rem; /* Espacio entre texto e imagen */
+            }
+            .fact-card .fact-image-preview {
+                flex-shrink: 0;
+                width: 35%; /* Ajusta el ancho de la imagen en el escritorio */
+            }
+        }
+
+        .fact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+        .fact-icon {
+            font-size: 3rem;
+            line-height: 1;
+            margin-bottom: 1rem;
+            color: #4299E1;
+        }
+        .fact-number {
+            background-color: #4299E1;
+            color: #FFFFFF;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: absolute;
+            top: -1rem;
+            right: -1rem;
+            border: 3px solid #F8FBFD;
+        }
+        .content-section {
+            display: none;
+            gap: 1.5rem; /* Espacio entre las tarjetas de hechos */
+        }
+        .content-section.active {
+            display: flex; /* Cambiado a flex para diseño de columna */
+            flex-direction: column; /* Apila los elementos verticalmente */
+        }
+        /* Estilos del Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #FFFFFF;
+            padding: 1.5rem;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh; /* Ajusta la altura máxima de la imagen en el modal */
+            height: auto;
+            border-radius: 8px;
+            object-fit: contain; /* Asegura que la imagen se ajuste sin recortar */
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: #2D3748;
+            cursor: pointer;
+            line-height: 1;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+        .modal-close-btn:hover {
+            background-color: #E0EBF5;
+        }
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            color: #2D3748;
+        }
+        .modal-description {
+            font-size: 0.9rem;
+            color: #6B7280;
+            margin-bottom: 1rem;
+            max-height: 100px; /* Limita la altura de la descripción */
+            overflow-y: auto; /* Añade scroll si la descripción es muy larga */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto max-w-5xl px-4 py-8 sm:py-12 lg:py-16">
+
+        <header class="text-center mb-12">
+            <div class="w-24 h-24 rounded-full bg-blue-100 mx-auto mb-4 flex items-center justify-center border-4 border-blue-200">
+                 <span class="text-4xl">✨</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">10 Cosas Sobre Mí</h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">He creado esta página interactiva para compartir un poco más sobre quién soy. ¡Explora las pestañas a continuación para descubrir 10 datos curiosos!</p>
+        </header>
+
+        <nav class="flex justify-center mb-10">
+            <div class="flex space-x-2 bg-blue-50 p-1.5 rounded-full shadow-sm">
+                <button id="tab1" class="tab-btn px-6 py-2 rounded-full font-semibold transition-colors duration-300">Página 1</button>
+                <button id="tab2" class="tab-btn px-6 py-2 rounded-full font-semibold transition-colors duration-300">Página 2</button>
+            </div>
+        </nav>
+
+        <main>
+            <div id="content1" class="content-section">
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/LqvWdLo.jpeg">
+                    <div class="fact-number">1</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🏐</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Atleta de Voleibol</h3>
+                        <p class="text-gray-600 text-sm">Me dedico al deporte, buscando siempre el mejor rendimiento en la cancha.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/LqvWdLo.jpeg" alt="Imagen de un jugador de voleibol" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.pinimg.com/736x/59/c9/87/59c987ce551cea312e8a1b9a08956d36.jpg">
+                    <div class="fact-number">2</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🎮</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Jugador de Videojuegos</h3>
+                        <p class="text-gray-600 text-sm">En mi tiempo libre, me sumerjo en mundos virtuales y desafíos digitales.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.pinimg.com/736x/59/c9/87/59c987ce551cea312e8a1b9a08956d36.jpg" alt="Imagen de un controlador de videojuegos" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/yW9Nehn.jpeg">
+                    <div class="fact-number">3</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🏡</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Residente de Macaíba</h3>
+                        <p class="text-gray-600 text-sm">Estoy orgulloso de llamar a Macaíba mi hogar, un lugar con esencia propia.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/yW9Nehn.jpeg" alt="Imagen de un paisaje de Macaíba" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.pinimg.com/736x/15/da/6f/15da6fa1c39191d4dc1f1b754b7f1ad5.jpg">
+                    <div class="fact-number">4</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🚴</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Ciclista en tiempo libre</h3>
+                        <p class="text-gray-600 text-sm">Aprovecho mi tiempo libre para montar en bicicleta y explorar nuevos caminos.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.pinimg.com/736x/15/da/6f/15da6fa1c39191d4dc1f1b754b7f1ad5.jpg" alt="Imagen de una persona en bicicleta" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/yQRRkQH.jpeg">
+                    <div class="fact-number">5</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">👨‍👩‍👧‍👦</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Mi familia</h3>
+                        <p class="text-gray-600 text-sm">Tengo una familia formada por un hermano menor y dos madres.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/yQRRkQH.jpeg" alt="Imagen de una familia feliz" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+            </div>
+
+            <div id="content2" class="content-section">
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/pC3v97M.jpeg">
+                    <div class="fact-number">6</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🎂</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Tengo 19 años</h3>
+                        <p class="text-gray-600 text-sm">Celebro mi 19 cumpleaños con mucha energía y planes para el futuro. Mi cumpleaños es el 6 de abril.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/pC3v97M.jpeg" alt="Imagen de una torta de cumpleaños con el número 19" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/p4QUPwt.jpeg">
+                    <div class="fact-number">7</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🎧</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Adicto a la música</h3>
+                        <p class="text-gray-600 text-sm">La música es la banda sonora de mi vida, siempre presente en cada momento.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/p4QUPwt.jpeg" alt="Imagen de auriculares y notas musicales" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/YToiAwj.jpeg">
+                    <div class="fact-number">8</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🤝</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Me gusta estar con mis amigos</h3>
+                        <p class="text-gray-600 text-sm">Valoro cada momento y la compañía de las personas que me hacen sentir bien.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/YToiAwj.jpeg" alt="Imagen de un grupo de amigos riendo" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/Fgv5wxh.jpeg">
+                    <div class="fact-number">9</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">🌳</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Me gusta la naturaleza</h3>
+                        <p class="text-gray-600 text-sm">Encuentro paz y renovación al aire libre, en medio de la belleza natural.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/Fgv5wxh.jpeg" alt="Imagen de un paisaje natural, árboles o montañas" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="relative fact-card" data-image-url="https://i.imgur.com/suB8ppI.jpeg">
+                    <div class="fact-number">10</div>
+                    <div class="fact-text-content flex flex-col items-center md:items-start">
+                        <div class="fact-icon">😴</div>
+                        <h3 class="font-bold text-xl mb-2 text-gray-800">Me encanta dormir</h3>
+                        <p class="text-gray-600 text-sm">Una buena noche de sueño es esencial para recargar las pilas y soñar despierto.</p>
+                    </div>
+                    <div class="fact-image-preview mt-4 md:mt-0 w-full md:w-1/3 lg:w-1/4">
+                        <img src="https://i.imgur.com/suB8ppI.jpeg" alt="Imagen de una persona durmiendo tranquilamente" class="rounded-lg shadow-md w-full h-auto object-cover">
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <section class="mt-16 py-8 px-6 bg-blue-50 rounded-lg shadow-md text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">✨ ¡Descubre Más Sobre Mí!</h2>
+            <p class="text-gray-700 mb-6 max-w-2xl mx-auto">¿Quieres una sorpresa? Haz clic en el botón de abajo para que una inteligencia artificial cree un pequeño texto sobre mí.</p>
+            <button id="generateTextBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-colors duration-300 shadow-lg hover:shadow-xl">
+                Generar Texto ✨
+            </button>
+            <div id="loadingIndicator" class="mt-4 text-blue-600 hidden">Cargando...</div>
+            <div id="generatedTextOutput" class="mt-6 p-4 bg-white rounded-lg border border-blue-100 text-gray-800 italic text-lg hidden">
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 pt-8 border-t border-blue-100">
+             <p class="text-gray-700 font-semibold text-lg">Mi Lema:</p>
+             <p class="text-500 italic">"Hecho es mejor que perfecto."</p>
+        </footer>
+
+    </div>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+            <img id="modalImage" src="" alt="Imagen de la Curiosidad">
+            <h3 id="modalTitle" class="modal-title"></h3>
+            <p id="modalDescription" class="modal-description"></p>
+        </div>
+    </div>
+
+    <script>
+        const tab1 = document.getElementById('tab1');
+        const tab2 = document.getElementById('tab2');
+        const content1 = document.getElementById('content1');
+        const content2 = document.getElementById('content2');
+        const generateTextBtn = document.getElementById('generateTextBtn');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const generatedTextOutput = document.getElementById('generatedTextOutput');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const factCards = document.querySelectorAll('.fact-card');
+
+        // Textos predefinidos para la "IA"
+        const predefinedTexts = [
+            "Conocimiento profundo de voleibol, destreza en videojuegos y amor por la naturaleza. Una combinación única de deportista, gamer y aventurero al aire libre, con el corazón anclado en Macaíba y lazos familiares fuertes. ¡Una personalidad vibrante y multifacética!",
+            "Un alma joven de 19 años que encuentra ritmo en la música y felicidad en la compañía de amigos. Entre la intensidad del vóley y la serenidad del ciclismo, siempre hay espacio para un buen descanso. ¡Una vida llena de energía y equilibrio!",
+            "Desde las canchas de vóley hasta los mundos virtuales, y de las calles de Macaíba a los senderos naturales. Este perfil revela a alguien que valora la conexión con la familia y los amigos, siempre con una banda sonora personal. ¡Una personalidad curiosa y adaptable!",
+            "Un amante del vóley y los videojuegos, con un profundo aprecio por la naturaleza y los momentos compartidos con seres queridos. Cada día es una oportunidad para aprender, pedalear y disfrutar de la música, antes de recargar energías con un merecido sueño. ¡Un espíritu libre y conectado!"
+        ];
+
+        function showTab(tabToShow, contentToShow, tabToHide, contentToHide) {
+            tabToShow.classList.add('tab-active');
+            contentToShow.classList.add('active');
+            tabToHide.classList.remove('tab-active');
+            contentToHide.classList.remove('active');
+        }
+
+        tab1.addEventListener('click', () => {
+            showTab(tab1, content1, tab2, content2);
+        });
+
+        tab2.addEventListener('click', () => {
+            showTab(tab2, content2, tab1, content1);
+        });
+        
+        window.addEventListener('load', () => {
+            showTab(tab1, content1, tab2, content2);
+        });
+
+        generateTextBtn.addEventListener('click', async () => {
+            loadingIndicator.classList.remove('hidden');
+            generatedTextOutput.classList.add('hidden');
+            generatedTextOutput.textContent = '';
+
+            // Simular un pequeño retraso para que parezca que la IA está 'pensando'
+            await new Promise(resolve => setTimeout(resolve, 1500)); // 1.5 segundos de retraso
+
+            // Sortear un texto de la lista
+            const randomIndex = Math.floor(Math.random() * predefinedTexts.length);
+            const selectedText = predefinedTexts[randomIndex];
+            
+            generatedTextOutput.textContent = selectedText;
+            generatedTextOutput.classList.remove('hidden');
+            loadingIndicator.classList.add('hidden');
+        });
+
+        // Lógica del Modal de Imagen
+        factCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const imageUrl = card.dataset.imageUrl;
+                const title = card.querySelector('h3').textContent;
+                const description = card.querySelector('p').textContent;
+
+                modalImage.src = imageUrl;
+                modalImage.alt = title; // El alt del modal será el título del hecho
+                modalTitle.textContent = title;
+                modalDescription.textContent = description;
+                imageModal.classList.add('show');
+            });
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            imageModal.classList.remove('show');
+        });
+
+        imageModal.addEventListener('click', (event) => {
+            if (event.target === imageModal) {
+                imageModal.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
